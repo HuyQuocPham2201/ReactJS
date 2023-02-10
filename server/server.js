@@ -9,14 +9,15 @@ require("dotenv").config();
 
 app.use(cors());
 app.use(express.json());
- app.get("/", (req, res) => {
+ app.get("/", async (req, res) => {
    try {
-        const results_1 = db.query(`SELECT * FROM public."GetAGVData_db_agvdata"`)
+        const results = await db.query(`SELECT * FROM public."GetAGVData_db_agvdata" ORDER BY data_id DESC LIMIT 1;`);
+        console.log(results)
          res.status(200).json ({
             status: "success",
-            results: results_1.rows,
+            results: results.rows.length,
             data: {
-               AGV_data_1: results_1.rows
+               AGV_data: results.rows
             }
             })
          } catch(err) {
@@ -26,13 +27,13 @@ app.use(express.json());
 
  app.get("/team", async (req, res) => {
     try {
-        const results = await db.query(`SELECT * FROM public."GetAGVData_db_agvdata"`)
-        console.log(results.rows)
+        const results_1 = await db.query(`SELECT * FROM public."GetAGVData_db_agvdata" ORDER BY data_id DESC LIMIT 1;`)
+        console.log(results_1)
         res.status(200).json ({
          status: "success",
-         results: results.rows,
+         results: results_1.rows,
          data : {
-            AGV_data : results.rows,
+            AGV_data_1 : results_1.rows,
          }
         })
     } catch(err) {

@@ -22,7 +22,7 @@ const Team = () => {
     console.log(response)
     //  const b = response.data.data
     //  console.log(b)
-    setA1(response.data.data.AGV_data)
+    setA1(response.data.data.AGV_data_1)
     console.log(a1)
     } catch (err) {}
   }
@@ -75,11 +75,59 @@ const Team = () => {
   ];
 
   return (
+
     <Box m="20px">
       <Header title="TABLE" subtitle="" />
+      <Box 
+      display="grid"
+      gridTemplateColumns="repeat(12, 1fr)"
+      gridAutoRows="140px"
+      gap="20px">
+        {/* Columns 1 */}
+      <Box gridColumn= "span 4"
+      gridRow = "span 4"
+       backgroundColor={colors.primary[400]}
+       overflow="auto"
+       borderBottom={`4px solid ${colors.primary[500]}`}
+       >
+
+          {/* Row 1 & 2*/}
+        <Box 
+        display="grid"
+        gridColumn= "span 4"
+        p ="100px"
+        gap = "10px"
+        gridTemplateColumns="repeat(12, 1fr)"
+       backgroundColor={colors.primary[400]}
+       overflow="auto"
+       borderBottom={`4px solid ${colors.primary[500]}`}>
+        <Box gridColumn= "span 6" 
+        backgroundColor={colors.primary[400]}
+        borderRight={`4px solid ${colors.primary[500]}`}
+
+> AGV</Box>
+        <Box gridColumn= "span 6"> AGV</Box>
+      </Box>
+        <Box gridColumn= "span 4"
+       gridRow = "span 5"
+       p = "100px"
+       backgroundColor={colors.primary[400]}
+       overflow="auto"
+       borderBottom={`4px solid ${colors.primary[500]}`}>   
+        </Box>
+        <Box>
+          AGV
+        </Box>
+
+      </Box>
+      {/* Columns 2 */}
       <Box
-        m="40px 0 0 0"
-        height="75vh"
+      backgroundColor={colors.primary[400]}
+      overflow="auto"
+      gridRow = "span 4"
+        gridColumn= "span 4"
+        // m="40px 0 0 0"
+        // height="80vh"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
@@ -110,6 +158,14 @@ const Team = () => {
         }}
       >
         <DataGrid  rows={DataTeam} columns={columns} components = {{Toolbar: GridToolbar}} />
+      </Box>
+      <Box gridColumn= "span 4"
+            gridRow = "span 4"
+            backgroundColor={colors.primary[400]}
+
+            >
+        AGV
+      </Box>
       </Box>
     </Box>
   );

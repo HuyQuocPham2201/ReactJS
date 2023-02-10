@@ -10,7 +10,7 @@ import Team from "./scenes/team";
 // import Bar from "./scenes/bar";
 import Calendar from "./scenes/calendar";
 // import FAQ from "./scenes/faq";
-import { AGVProvider } from "./context/AGVContext";
+import { AGVProvider, AGVProvider1 } from "./context/AGVContext";
 
 function App() {
   const [theme,colorMode] = useMode();
@@ -23,6 +23,7 @@ function App() {
       <Sidebar  isSidebar={isSidebar} />
       <main className = "content">
         <Topbar/>
+        <AGVProvider1>
         <AGVProvider>
         <Routes>
           < Route path = "/" element = {<Dashboard />}/>
@@ -33,6 +34,7 @@ function App() {
           < Route path = "/faq" element = {<FAQ/>} /> */}
         </Routes>
                   </AGVProvider>
+                  </AGVProvider1>
 
 
       </main>

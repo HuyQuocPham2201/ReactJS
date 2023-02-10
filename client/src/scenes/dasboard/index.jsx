@@ -29,12 +29,15 @@ const Dashboard = () => {
     console.log(response)
     //  const b = response.data.data
     //  console.log(b)
-    setA(response.data.data.AGV_data_1)
-    console.log(a)
+    setA(response.data.data.AGV_data)
     } catch (err) {}
   }
    setInterval(async() => await fetchData(), 2000);
   },[])
+
+  
+  
+  
 
   return (
     <Box m="20px">
@@ -79,8 +82,44 @@ const Dashboard = () => {
               sx={{ color: colors.greenAccent[600], fontSize: "26px" }}/>
               &nbsp;
               AGV1 
+              
             </div>
-    
+                <Box sx ={{fontWeight: "bold", 
+                fontSize: "18px", 
+                alignItems: "left",
+                justifyContent: 'left'}}>
+
+                {a.map((AGV) => {
+                 return (
+                  <Typography
+                  >
+                      <div>
+                        Car ID: {AGV.car_id}
+                        <br/>
+                        Speed: {AGV.car_speed}
+                           <br/>
+                           Battery Capacity: {AGV.car_battery_capacity}
+                           <br/>
+                           Location: {AGV.previous_node}
+                      </div>
+                      </Typography>
+                    )
+                
+                })}
+
+                </Box>
+
+                {/* {a.filter((AGV) => {
+                  for(let i = 0; i < a.length; i++) {
+                    AGV.data_id === i
+                  }
+                }).map((AGV) => {
+                  return (
+                    <div>{AGV.car_id}</div>
+                  )
+                } )} */}
+                      {/* {a.filter((AGV)=> AGV.data_id === 1000).map((AGV) => {
+                    return(<div>{AGV.car_speed}</div>) })} */}
            </Box>
         </Box>
         
