@@ -1,44 +1,143 @@
-import { Box, Button, FormControl,Select, IconButton, Typography, useTheme, InputLabel } from "@mui/material";
+import { Box, Button, FormControl,Select, IconButton, Typography, useTheme, InputLabel, Option, MenuItem, TextField } from "@mui/material";
 import { tokens } from "../../theme";
-import { mockTransactions } from "../../data/mockData";
-import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-import Header from "../../Components/Header";
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar';
+import { useContext, useEffect, useState } from "react";
+import AGVContext from "../../context/AGVContextDash";
+import APIs from "../../apis/APIs";
+import { AGVs, EndPoints, LoadAmount, LoadName, LoadWeight } from "../../data/DatatDash";
+import { w3cwebsocket as W3CwebSocket } from "websocket";
+import { StartPoints } from "../../data/DatatDash";
+import { color } from "@mui/system";
+// import { mockTransactions } from "../../data/mockData";
+// import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
+// import Header from "../../Components/Header";
 // import LineChart from "../../components/LineChart";
 // import GeographyChart from "../../components/GeographyChart";
 // import BarChart from "../../components/BarChart";
-import StatBox from "../../Components/StatBox";
-import { useContext, useEffect } from "react";
-import AGVContext from "../../context/AGVContext";
-import APIs from "../../apis/APIs";
-import { MenuItem } from "react-pro-sidebar";
-import { AGVs } from "../../data/DatatDash";
-import MultipleSelect from "../../Components/MultipleSelect";
-import SelectBox from "../../Components/MultipleSelect";
-import SelectAGVs from "../../Components/SelectAGVs";
-import SelectStart from "../../Components/SelectStart";
+// import StatBox from "../../Components/StatBox";
+// import SelectStart from "../../Components/SelectStart";
+// import { StartTime   } from "../../data/DatatDash";
 
+
+
+ const client = new W3CwebSocket("ws://100.88.184.54:8000/ws/agvdata")
 const Dashboard = () => {
   const theme = useTheme();
   const colors = tokens(theme.palette.mode);
   const {a, setA} = useContext(AGVContext);
-  useEffect(() => {
-   const fetchData = async () => {
-    try {
-    const response = await APIs.get("/")
-    console.log(response)
-    //  const b = response.data.data
-    //  console.log(b)
-    setA(response.data.data.AGV_data)
-    } catch (err) {}
-  }
-   setInterval(async() => await fetchData(), 2000);
-  },[])
+  const [load_name, setLoad_name] = useState('')
+  const [start_time, setStart_time] = useState('')
+  const [load_amount, setLoad_amount] = useState('')
+  const [load_weight, setLoad_weight] = useState('')
+  const [start, setStart] = useState('')
+  const [end, setEnd] = useState('')
+  const [coloredAGV1, setColoredAGV1] = useState('')
+  const [coloredAGV2, setColoredAGV2] = useState('')
+  const [coloredAGV3, setColoredAGV3] = useState('')
+  const [coloredAGV4, setColoredAGV4] = useState('')
 
-  
-  
-  
 
+  //  const handleChange = (event) => {
+  //       setStart(event.target.value)
+  // }
+
+   
+
+    client.onopen = () => {
+          console.log('Connected');
+    }
+ 
+   
+     client.onmessage = (message) => {
+      const dataFromServer = JSON.parse(message.data)
+      setA(dataFromServer)
+      console.log(a)
+      //  const Da0 = a[1].fields
+      //  console.log(Da0)
+     }
+   
+    // const onButtonClicked = (value) => {
+    //       client.send(JSON.stringify({
+    //         type: "message",
+    //         msg: value
+    //       }))
+    // }
+    const handleSubmit = async (e) => {
+      e.preventDefault()
+      try {
+        const send = await APIs.post("/orders/", {
+          "load_name": load_name,
+          "load_amount": load_amount,
+          // "load_weight": load_weight,
+          "start_time": start_time,
+          "from_node": start,
+          "to_node": end,
+        })
+        console.log(send);
+
+
+      } catch (err) {}
+    }
+    useEffect(() => {
+      {a.map(AGV1 => {
+        if (AGV1.fields.car_id == 0) {
+          if (AGV1.fields.car_battery_capacity <= '30') {
+            
+            setColoredAGV1(colors.redAccent[600])
+        // } else if ('20' < AGV1.fields.car_battery_capacity <= '50') {
+        //   setColoredAGV1(colors.redAccent[300]) }
+        } else {
+          setColoredAGV1(colors.greenAccent[400])
+        }
+      }})}
+    }, [])
+
+    useEffect(() => {
+      {a.map(AGV2 => {
+        if (AGV2.fields.car_id == 1) {
+          if(AGV2.fields.car_battery_capacity <= '30') {
+            setColoredAGV2(colors.redAccent[600])
+          // } else if ('20' < AGV2.fields.car_battery_capacity < '50') {
+          //   setColoredAGV2(colors.redAccent[300])
+          // // } else {
+          } else  {
+            setColoredAGV2(colors.greenAccent[400])
+          }
+        }
+      }
+
+    )}
+    })
+    useEffect(() => {
+      {a.map(AGV3 => {
+        if (AGV3.fields.car_id == 2) {
+          if(AGV3.fields.car_battery_capacity < '30') {
+            setColoredAGV3(colors.redAccent[600])
+          // } else if ('20' <= AGV3.fields.car_battery_capacity <= '50') {
+          //   setColoredAGV3(colors.redAccent[300]) }
+          } else {
+            setColoredAGV3(colors.greenAccent[400])
+          }
+        }
+      }
+
+    )}
+    })
+    useEffect(() => {
+      {a.map(AGV4 => {
+        if (AGV4.fields.car_id == 3) {
+          if(AGV4.fields.car_battery_capacity < '30') {
+            setColoredAGV4(colors.redAccent[600])
+          // } else if ('20' <= AGV4.fields.car_battery_capacity <= '50') {
+          //   setColoredAGV4(colors.redAccent[300]) }
+          } else {
+            setColoredAGV4(colors.greenAccent[400])
+          }
+        }
+      }
+
+    )}
+    })
   return (
     <Box m="20px">
       {/* HEADER */}
@@ -72,40 +171,63 @@ const Dashboard = () => {
         <Box
           gridColumn="span 3"
           backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="flex"
-          justifyContent="center"
+          // display="flex"
+          // alignItems="flex"
         >
-          <Box sx = {{fontWeight: "bold", fontSize: "23px"}}>
-           <div> 
-        <DirectionsCarIcon
-              sx={{ color: colors.greenAccent[600], fontSize: "26px" }}/>
+          <Box 
+          color = {coloredAGV1}
+        sx ={{  
+          textAlign: "center",
+          justifyContent: "center",
+          fontWeight: "bold",
+          fontSize: "x-large"
+        }}
+          >
+            
+                     <DirectionsCarIcon
+              sx={{ fontSize: "27px"}}/>
               &nbsp;
-              AGV1 
+              AGV 1
+
               
-            </div>
                 <Box sx ={{fontWeight: "bold", 
                 fontSize: "18px", 
-                alignItems: "left",
-                justifyContent: 'left'}}>
+                }}
+                display="flex"
+          alignItems="flex"
+          justifyContent="left"
+                >
 
-                {a.map((AGV) => {
-                 return (
-                  <Typography
+                {/* <Typography color = {colors.greenAccent[600]}> */}
+                  <Typography className = "AGVtable"
+                  fontSize = "medium"
+                  fontWeight= "bold"
+                  ml = "20px"
+                  component={'span'}
+
                   >
-                      <div>
-                        Car ID: {AGV.car_id}
-                        <br/>
-                        Speed: {AGV.car_speed}
+                    {a.map(AGV => {
+                      if (AGV.fields.car_id == 0) {
+                        const DataAGV0 = AGV.fields
+                        return (
+                          <div key = {DataAGV0.car_id}>
+                           Car ID: {DataAGV0.car_id}
                            <br/>
-                           Battery Capacity: {AGV.car_battery_capacity}
+                           Car Speed: {DataAGV0.car_speed}
+                          <br/>
+                          Battery Capacity: {DataAGV0.car_battery_capacity}
                            <br/>
-                           Location: {AGV.previous_node}
-                      </div>
-                      </Typography>
-                    )
+                          Location: {DataAGV0.previous_node}
+                          </div>
+                        )
+                      } 
+                      
+                      })}
                 
-                })}
+                                      
+                     
+                  
+                </Typography>
 
                 </Box>
 
@@ -120,67 +242,173 @@ const Dashboard = () => {
                 } )} */}
                       {/* {a.filter((AGV)=> AGV.data_id === 1000).map((AGV) => {
                     return(<div>{AGV.car_speed}</div>) })} */}
-           </Box>
         </Box>
-        
+        </Box>
+        {/* AGV Box 2 */}
         <Box
           gridColumn="span 3"
           backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
         >
-          <StatBox
-            title="AGV 2"
-            subtitle="..."
-            progress="0.50"
-            increase="21%"
-            icon={
-              <DirectionsCarIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="AGV 3"
-            subtitle="..."
-            progress="0.30"
-            increase="5%"
-            icon={
-              <DirectionsCarIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
-        </Box>
-        <Box
-          gridColumn="span 3"
-          backgroundColor={colors.primary[400]}
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-        >
-          <StatBox
-            title="AGV 4"
-            subtitle="..."
-            progress="0"
-            increase="43%"
-            icon={
-              <DirectionsCarIcon
-                sx={{ color: colors.greenAccent[600], fontSize: "26px" }}
-              />
-            }
-          />
+          <Box color = {coloredAGV2}
+          sx ={{ 
+          textAlign: "center",
+          justifyContent: "center",
+          fontWeight: "bold",
+          fontSize: "x-large"
+        }}
+          >
+                     <DirectionsCarIcon
+              sx={{ fontSize: "27px"}}/>
+              &nbsp;
+              AGV 2
+              <Box sx ={{fontWeight: "bold", 
+                fontSize: "18px", 
+                }}
+                display="flex"
+                alignItems="flex"
+                justifyContent="left"
+                >
+                  <Typography className = "AGVtable"
+                  fontSize = "medium"
+                  fontWeight= "bold"
+                  ml = "20px"
+                  component={'span'}
+                  >
+                                      
+                      {a.map(AGV => {
+                      if (AGV.fields.car_id == 1) {
+                        const DataAGV0 = AGV.fields
+                        return (
+                          <div key = {DataAGV0.car_id}>
+                           Car ID: {DataAGV0.car_id}
+                           <br/>
+                           Car Speed: {DataAGV0.car_speed}
+                          <br/>
+                          Battery Capacity: {DataAGV0.car_battery_capacity}
+                           <br/>
+                          Location: {DataAGV0.previous_node}
+                          </div>
+                        )
+                      } 
+                      
+                      })} 
+                    
+                </Typography>
+
+                </Box>
+            </Box>
         </Box>
 
+        {/* AGV BOX 3 */}
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+        >
+          <Box color = {coloredAGV3}
+          sx ={{
+          textAlign: "center",
+          justifyContent: "center",
+          fontWeight: "bold",
+          fontSize: "x-large"
+        }}
+          >
+                     <DirectionsCarIcon
+              sx={{ fontSize: "27px"}}/>
+              &nbsp;
+              AGV 3
+              <Box sx ={{fontWeight: "bold", 
+                fontSize: "18px", 
+                }}
+                display="flex"
+                alignItems="flex"
+                justifyContent="left"
+                >
+                  <Typography className= "AGVtable"
+                  fontSize = "medium"
+                  fontWeight= "bold"
+                  ml = "20px"
+                  component={'span'}
+                  >
+                    {a.map(AGV => {
+                      if (AGV.fields.car_id == 2) {
+                        const DataAGV0 = AGV.fields
+                        return (
+                          <div key = {DataAGV0.car_id}>
+                           Car ID: {DataAGV0.car_id}
+                           <br/>
+                           Car Speed: {DataAGV0.car_speed}
+                          <br/>
+                          Battery Capacity: {DataAGV0.car_battery_capacity}
+                           <br/>
+                          Location: {DataAGV0.previous_node}
+                          </div>
+                        )
+                      } 
+                      
+                      })}
+                </Typography>
+
+                </Box>
+            </Box>
+        </Box>
+
+        {/* AGV BOX 4 */}
+        <Box
+          gridColumn="span 3"
+          backgroundColor={colors.primary[400]}
+        >
+          <Box color = {coloredAGV4}
+          sx ={{
+          textAlign: "center",
+          justifyContent: "center",
+          fontWeight: "bold",
+          fontSize: "x-large"
+        }}
+          >
+                     <DirectionsCarIcon
+              sx={{ fontSize: "27px"}}/>
+              &nbsp;
+              AGV 4
+              <Box sx ={{fontWeight: "bold", 
+                fontSize: "18px", 
+                }}
+                display="flex"
+                alignItems="flex"
+                justifyContent="left"
+                >
+                  <Typography className = "AGVtable"
+                  fontSize = "medium"
+                  fontWeight= "bold"
+                  ml = "20px"
+                  component={'span'}
+
+                  >
+                                      
+                       {a.map(AGV => {
+                      if (AGV.fields.car_id == 3) {
+                        const DataAGV0 = AGV.fields
+                        return (
+                          <div key = {DataAGV0.car_id} >
+                           Car ID: {DataAGV0.car_id}
+                           <br/>
+                           Speed: {DataAGV0.car_speed}
+                          <br/>
+                          Battery Capacity: {DataAGV0.car_battery_capacity}
+                           <br/>
+                          Location: {DataAGV0.previous_node}
+                          </div>
+                        )
+                      } 
+                      
+                      })}
+                  
+                </Typography>
+
+                </Box>
+            </Box>
+        </Box>
+        
+        
         {/* ROW 2 */}
         <Box
           gridColumn="span 8"
@@ -188,7 +416,8 @@ const Dashboard = () => {
           backgroundColor={colors.primary[400]}
           overflow = 'auto'
         >
-          <img width = {925} height ={450} src = 'AGVpic.png'></img>
+          <img width="100%" height ="100%" src = 'map.svg'></img>
+
         </Box>
         <Box
           gridColumn="span 4"
@@ -213,23 +442,156 @@ const Dashboard = () => {
               justifyContent="space-between"
               backgroundColor = {colors.greenAccent[400]}
               alignItems="center"
-              borderBottom={`4px solid ${colors.primary[500]}`}
+              borderBottom={`4px solid ${colors.primary[400]}`}
               p="15px"
             >
               <Box sx = {{fontWeight: "bold", fontSize: "20px"}}><div>Command.</div></Box>
             </Box>
-            <Box className="Command_Box"  >
-              AGVs: 
-               {/* <MultipleSelect sx = {{ m: -2, ml: 8 , width: 200}}/> */}
-               <SelectAGVs />
+            <Box className="Command_Box" 
+            sx = {{mt: "20px"}}
+            >
+              Load Name: 
+              <div>
+        <FormControl sx = {{m: -5, ml: 18, width: 250 }}>
+            <InputLabel>Select Load Name </InputLabel>
+            <Select
+            value={load_name}
+            label = "setLoad_name"
+            onChange = {event => setLoad_name(event.target.value)}
+            >
+                {LoadName.map((load_name) => (
+                    <MenuItem
+                    key={load_name}
+                    value = {load_name}
+                    >
+                    {load_name}</MenuItem>
+                ))}
+                
+
+            </Select>
+        </FormControl>
+        </div>
+               
             </Box>
             <Box className="Command_Box">
-              Starting Points: 
-              <SelectStart title = "Select Starting Points"/>
+              Load Amount: 
+              <div>
+        <FormControl sx = {{m: -5,ml: 18, width: 250 }}>
+            <InputLabel>Load Amount</InputLabel>
+            <Select
+            value={load_amount}
+            label = "setLoad_amount"
+            onChange = {event => setLoad_amount(event.target.value)}
+            >
+                {LoadAmount.map((load_amount) => (
+                    <MenuItem
+                    key={load_amount}
+                    value = {load_amount}
+                    >
+                    {load_amount}</MenuItem>
+                ))}
+             </Select>
+            </FormControl>
+            {/* <FormControl sx = {{m:-8.4, ml:34, width: 121 }}>
+            <InputLabel>Load Weight</InputLabel>
+            <Select
+            value={load_weight}
+            label = "setLoad_weight"
+            onChange = {event => setLoad_weight(event.target.value)}
+            >
+                {LoadWeight.map((load_weight) => (
+                    <MenuItem
+                    key={load_weight}
+                    value = {load_weight}
+                    >
+                    {load_weight}</MenuItem>
+                ))}
+                
+
+            </Select>
+        </FormControl> */}
+        </div>
+            </Box>
+            <Box className="Command_Box"
+            >
+              Starting Time: 
+              <div>
+        <FormControl sx = {{m: -5, ml: 18, width: 250 }}>
+          {/* <InputLabel>ABVC</InputLabel> */}
+            {/* <Select
+            value={start_time}
+            label = "setStart_time"
+            onChange = {event => setStart_time(event.target.value)}
+            >
+                {StartTime.map((start_time) => (
+                    <MenuItem
+                    key={start_time}
+                    value = {start_time}
+                    >
+                    {start_time}</MenuItem>
+                ))}
+                
+            
+            </Select> */}
+            <TextField 
+            label = "Select Starting Time"
+            value={start_time}
+            onChange = {event => setStart_time(event.target.value)}
+
+            />
+
+
+        </FormControl>
+
+        </div>
+
+            </Box>
+            <Box className="Command_Box">
+               Starting Points: 
+               <div>
+        <FormControl sx = {{m: -5, ml: 18, width: 250 }}>
+            <InputLabel>Select Starting Points</InputLabel>
+            <Select
+            value={start}
+            label = "setStart"
+            onChange = {event => setStart(event.target.value)}
+            >
+                {StartPoints.map((start) => (
+                    <MenuItem
+                    key={start}
+                    value = {start}
+                    >
+                    {start}</MenuItem>
+                ))}
+                
+
+            </Select>
+        </FormControl>
+        </div>
             </Box>
             <Box className="Command_Box">
                Ending Points: 
-               <SelectStart title = "Select Ending Points"/>
+               <div>
+        <FormControl sx = {{m: -5, ml: 18, width: 250 }}>
+            <InputLabel>Select Ending Points</InputLabel>
+            <Select
+            value={end}
+            label = "setEnd"
+            onChange = {event => setEnd(event.target.value)}
+            >
+                {EndPoints.map((a) => (
+                    <MenuItem
+                    key={a}
+                    value = {a}
+                    >
+                    {a}</MenuItem>
+                ))}
+                
+
+            </Select>
+        </FormControl>
+        </div>
+
             </Box>
             <Box 
             display="flex"
@@ -241,9 +603,11 @@ const Dashboard = () => {
               fontSize: "14px",
               fontWeight: "bold",
               padding: "10px 20px",
-            }} >
+            }} 
+           onClick = {handleSubmit}
+            >
               Select 
-                        </Button>
+            </Button>
                
             </Box>
         </Box>

@@ -5,13 +5,14 @@ import Topbar from "./scenes/global/Topbar";
 import Sidebar from "./scenes/global/Sidebar";
 import Dashboard from "./scenes/dasboard";
 import {Routes, Route} from "react-router-dom";
-import Team from "./scenes/team";
+import Team from "./scenes/table";
 // import Map from "./scenes/map";
 // import Bar from "./scenes/bar";
 import Calendar from "./scenes/calendar";
 // import FAQ from "./scenes/faq";
-import { AGVProvider, AGVProvider1 } from "./context/AGVContext";
-
+import { AGVProvider } from "./context/AGVContextDash";
+import Table from "./scenes/table";
+import { AGVProvider_table } from "./context/AGVContextTable";
 function App() {
   const [theme,colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
@@ -23,18 +24,18 @@ function App() {
       <Sidebar  isSidebar={isSidebar} />
       <main className = "content">
         <Topbar/>
-        <AGVProvider1>
         <AGVProvider>
+          <AGVProvider_table>
         <Routes>
           < Route path = "/" element = {<Dashboard />}/>
-          < Route path = "/team" element = {<Team />} /> 
+          < Route path = "/table" element = {<Table />} /> 
           < Route path = "/calendar" element = {<Calendar/>} />
           {/* < Route path = "/map" element = {<Map/>} />
           < Route path = "/bar" element = {<Bar/>} />
           < Route path = "/faq" element = {<FAQ/>} /> */}
         </Routes>
-                  </AGVProvider>
-                  </AGVProvider1>
+        </AGVProvider_table>
+         </AGVProvider>
 
 
       </main>

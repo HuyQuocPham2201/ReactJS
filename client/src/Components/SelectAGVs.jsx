@@ -24,16 +24,16 @@ export default function SelectAGVs (){
         label ="setSelected"
         onChange = {handleChange}
         >  
-        {AGVs.map((selected) => (
+        {/* {AGVs.map((selected) => (
            <MenuItem
            key={selected}
            value = {selected}
            > {selected}</MenuItem>
-        ))}
-        {/* <MenuItem value ={1}>AGV 1</MenuItem>
+        ))} */}
+        <MenuItem value ={1}>AGV 1</MenuItem>
         <MenuItem value = {2}>AGV 2</MenuItem>
         <MenuItem value = {3}>AGV 3</MenuItem>
-        <MenuItem value = {4}>AGV 4</MenuItem> */}
+        <MenuItem value = {4}>AGV 4</MenuItem>
         </Select>
       </FormControl>
     </div>

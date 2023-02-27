@@ -1,5 +1,6 @@
 
 @import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@400;600;700&display=swap');
+
 html, 
 body,
 #root,
@@ -32,7 +33,79 @@ body,
 .Command_Box {
   font-weight: bold;
   font-size: large ;
-  margin-top: 10%;
-  margin-bottom: 5%;
+   margin-top: 3%;
+  /* margin-bottom: 5%;  */
   margin-left: 3%;
+}
+.AGVtable {
+  text-align: left;
+  align-content: flex-start;
+  align-items: flex-start;
+  font-size: large;
+  font-weight: 800;
+  /* color: #FFF8DC	; */
+  /* color: #E89798; */
+ /* color: #B04648; */
+ color: grey;
+ font-style: italic;
+  
+}
+.BoxAGV1 {
+  text-align: center;
+  justify-content: center;
+  font-weight: bold;
+  font-size: x-large
+}
+
+/* .layoutTeam {
+  grid-template-areas: 
+  "n1 n2 c c c c c d d"
+  "n3 n4 c c c c c d d"
+  "n5 n6 c c c c c d d"
+  "n7 n8 c c c c c d d" ;
+} */
+
+/* Team  - Table Page */
+
+.layoutTeam {
+  grid-template-areas: 
+  "c c c c c a a d d d"
+  "c c c c c a a d d d"
+  "c c c c c a a d d d"
+  "c c c c c a a d d d";
+}
+.Node_text_header {
+  text-align: center;
+  font-size: large;
+  font-weight: 600;
+}
+.Node_text {
+  margin-left: 5%;
+  font-size: medium;
+  font-weight: 500;
+  margin-top: 5%;
+}
+
+.Command_Box_Team {
+  margin-top: 1%;
+  margin-left: 4%;
+  font-size: large;
+  font-weight: bold;
+}
+
+/* Calendar */
+.layoutCalendar {
+  grid-template-areas: 
+  "a a a b";
+}
+.Command_header_calendar {
+  background-color: #477EB5;
+}
+
+.Command_Box_Calendar {
+  font-weight: bold;
+  font-size: medium; 
+  margin-top: 30px;
+  margin-bottom: 10px;
+  margin-left: 15px;
 }

@@ -8,13 +8,13 @@ export const  AGVProvider=props => {
         {props.children}
     </AGVContext.Provider>
 )}
-export const  AGVProvider1=props => {
-        const [a1, setA1] = useState([])
-        return (
-        <AGVContext.Provider value = {{a1, setA1}}>
-            {props.children}
-        </AGVContext.Provider>
-    )}
+// export const  AGVProvider1=props => {
+//         const [a1, setA1] = useState([])
+//         return (
+//         <AGVContext.Provider value = {{a1, setA1}}>
+//             {props.children}
+//         </AGVContext.Provider>
+//     )}
    
     export default AGVContext;
 

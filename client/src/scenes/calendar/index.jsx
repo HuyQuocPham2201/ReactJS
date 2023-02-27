@@ -1,24 +1,51 @@
-import {useState} from 'react';
+import {useContext, useState} from 'react';
 import FullCalendar, {formatDate} from "@fullcalendar/react";
 import dayGridPlugin from '@fullcalendar/daygrid';
 import timeGridPlugin from '@fullcalendar/timegrid';
 import listPlugin from '@fullcalendar/list';
 import interactionPlugin  from '@fullcalendar/interaction';
+import APIs from '../../apis/APIs';
 import {
     Box,
+    FormControl,
     List,
     ListItem,
     ListItemText,
+    TextField,
     Typography,
     useTheme,
+    Button
 } from "@mui/material";
 import Header from '../../Components/Header';
 import { tokens } from '../../theme';
+
 
 const Calendar = () => {
     const theme = useTheme();
     const colors = tokens(theme.palette.mode);
     const [currentEvents, setCurrentEvents] = useState ([]);
+   
+    const [loadname, setLoadname] = useState('')
+    const [loadamount, setLoadamount] = useState('')
+    const [start_time, setStart_time] = useState('')
+    const [start_point, setStart_point] = useState('')
+    const [end_point, setEnd_point] = useState('')
+
+    const onClickedButton = async (event) => {
+        event.preventDefault()
+        try {
+          const send = await APIs.post("/orders/", {
+             "load_name": loadname,
+             "load_amount": loadamount,
+             "start_time": start_time,
+             "from_node": start_point,
+             "to_node": end_point
+          })
+          console.log(send);
+        } catch (err) {}
+      }
+
+
     const handleDateClick = (selected) => {
         const title = prompt("Please enter a new title for your event")
         const calendarApi = selected.view.calendar;
@@ -41,8 +68,21 @@ const Calendar = () => {
             selected.event.remove();
         }
     }
-    return <Box m = "20px">
-        <Header title = "CALENDAR" subtitle = "Full Calendar Interactive Page" />
+    return (
+        <Box
+        display = "grid"
+        gridTemplateColumns="repeat(4, 1fr)"
+        className = "layoutCalendar"
+        backgroundColor = {colors.primary[400]}
+        > 
+        {/* <Header title = "CALENDAR" subtitle = "Full Calendar Interactive Page" /> */}
+
+    <Box 
+    width = "100%"
+    gridArea="a"
+    borderRight = {`10px solid ${colors.primary[500]}`}
+
+    >
         <Box display = "flex" justifyContent = "space-between">
             {/* CALENDAR SIDEBAR */}
             <Box flex ="1 1 20%" 
@@ -109,5 +149,121 @@ const Calendar = () => {
             </Box>
         </Box>
     </Box>
-}
+    <Box gridArea="b"
+    overflow= "auto"
+    >
+         <Box
+  className="Command_header_calendar"
+  p = "5px"
+  width = "100%"
+  sx = {{textAlign: "left",
+  fontSize: "x-large",
+  fontWeight: "bold"
+}}
+  >
+    Command.
+  </Box>
+  <Box
+  className = "Command_Box_Calendar"
+  >
+    Load Name: 
+    <div>
+    <FormControl sx = {{m: -5, ml: 15, width: "55%" }}>
+    {/* <InputLabel>Select Load Name </InputLabel> */}
+    {/* <Select
+    value = {loadname}
+    onChange = {e => setLoadname(e.target.value)}
+    >
+     <MenuItem value = {10}>10</MenuItem>
+     
+    </Select> */}
+
+    <TextField
+    label = "Select Load Name"
+    value = {loadname}
+    onChange = {event => setLoadname(event.target.value)}
+    />
+ 
+    </FormControl>
+    </div>
+  
+  </Box>
+  <Box
+  className = "Command_Box_Calendar"
+  > 
+   Load Amount:
+   <div>
+    {/* <InputLabel>Select Load Amount</InputLabel> */}
+    <FormControl sx = {{m: -5, ml: 15, width: "55%"}}>
+    <TextField
+    label ="Select Load Amount"
+     value = {loadamount}
+     onChange = {event => setLoadamount(event.target.value)}
+    />
+    </FormControl>
+   </div>
+  </Box>
+  <Box className = "Command_Box_Calendar"
+  >
+    Starting Time: 
+    <div>
+    <FormControl
+    sx = {{m: -5, ml: 15, width: "55%"}}
+    >
+    {/* <InputLabel>Select Starting Time</InputLabel> */}
+    <TextField 
+    label = "Select Starting Time"
+    value = {start_time}
+    onChange = {(event) => setStart_time(event.target.value)}
+    />
+
+    </FormControl>
+    </div>
+  </Box>
+
+  <Box className = "Command_Box_Calendar"> 
+  Starting Points: 
+  <div>
+    <FormControl sx = {{m: -5, ml: 15, width: "55%"}}>
+        <TextField
+        value = {start_point}
+        onChange = {(event) => {setStart_point(event.target.value)}}
+        label = "Select Start Point"
+        />
+    </FormControl>
+    </div>
+  </Box>
+  <Box className="Command_Box_Calendar">
+    Ending Points: 
+    <div>
+    <FormControl sx = {{m: -5, ml: 15, width: "55%"}}>
+      <TextField 
+      value = {end_point}
+      onChange = {event => setEnd_point(event.target.value)}
+      label = "Select Ending Points"
+      />
+    </FormControl>
+    </div>
+  </Box>
+
+  <Box  sx= {{textAlign: "center"
+   }}
+>
+    <Button  sx = {{
+    backgroundColor: colors.redAccent[400] ,
+    color: colors.grey[100],
+    fontSize: "14px",
+    fontWeight: "bold",
+    padding: "10px 20px",
+    }} 
+    onClick = {onClickedButton}
+    >
+      Select
+    </Button>
+  </Box>
+       
+    </Box>
+    </Box>
+    
+)}
 export default Calendar;
