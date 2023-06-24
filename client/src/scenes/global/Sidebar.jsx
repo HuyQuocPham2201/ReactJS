@@ -121,6 +121,7 @@ const Sidebar = () => {
           <Box paddingLeft={isCollapsed ? undefined : "0%"}>
             <MenuItem
               title="Dasboard"
+              // routerLink = {< Link to ="/dashboard" />}
               routerLink = {< Link to ="/" />}
               icon={<HomeOutlinedIcon />}
               selected={selected}
@@ -171,6 +172,7 @@ const Sidebar = () => {
         {isCollapsed && (
            <Box>
            <MenuItem
+             //routerLink = {< Link to ="/dashboard" />}
              routerLink = {< Link to ="/" />}
              icon={<HomeOutlinedIcon />}
              selected={selected}

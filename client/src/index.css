@@ -96,7 +96,11 @@ body,
 /* Calendar */
 .layoutCalendar {
   grid-template-areas: 
-  "a a a b";
+  "a a a a a b"
+  "a a a a a b"
+  "a a a a a b"
+  "a a a a a b"
+  "c c c c c b";
 }
 .Command_header_calendar {
   background-color: #477EB5;
@@ -105,7 +109,36 @@ body,
 .Command_Box_Calendar {
   font-weight: bold;
   font-size: medium; 
-  margin-top: 30px;
-  margin-bottom: 10px;
+  margin-top: 25px;
+  margin-bottom: 5px;
   margin-left: 15px;
+}
+.sing_in {
+  font-size: large;
+}
+.choose_file 
+{
+  font-size: 16px;
+  border-radius: 10px;
+  /* box-shadow: 5px 5px 10px black; */
+  width: 30x;
+  outline: none;
+  font-weight: bold;
+  margin-bottom: 5px;
+}
+
+::-webkit-file-upload-button
+{
+  color: white;
+  background-color: #d8ae70;
+  padding: 12px;
+  border: none; 
+  border-radius: 10px;
+  /* box-shadow: 0 1px 1px #6b4559; */
+  font-weight: bold;
+  margin-left: 10px;
+}
+::-webkit-file-upload-button:hover
+{
+    background-color: #438a5e;
 }

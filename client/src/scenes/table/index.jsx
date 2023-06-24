@@ -1,27 +1,40 @@
 
 import { Box, FormControl, InputLabel, TextField, Typography,Button , useTheme, Checkbox, Container } from "@mui/material";
-import { DataGrid, GridToolbar } from "@mui/x-data-grid";
+import { DataGrid } from "@mui/x-data-grid";
+//import { DataGrid, GridToolbar, GridToolbarExport, GridToolbarExportContainer, GridToolbarColumnsButton, GridToolbarDensitySelector, GridToolbarFilterButton, GridToolbarContainer } from "@mui/x-data-grid";
 import { tokens } from "../../theme";
-import { DataTeam } from "../../data/DataTeam";
 import MenuItem from '@mui/material/MenuItem';
 import Select from '@mui/material/Select';
-import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
-import Header from "../../Components/Header";
+import { w3cwebsocket as W3CwebSocket } from "websocket";
 import { useState, useEffect, useContext } from "react";
 import APIs from "../../apis/APIs";
-import { AGVContext } from "../../context/AGVContextDash";
-import { w3cwebsocket as W3CwebSocket } from "websocket";
-import Grid from '@mui/material/Unstable_Grid2';
-import Stack from '@mui/material/Stack';
-import { color, fontSize, fontWeight } from "@mui/system";
+import clsx from 'clsx';
 import { Guidance_type, Load_transfer } from "../../data/DataTable";
 import { AGVContext_table } from "../../context/AGVContextTable";
-import { GridCellParams } from "@mui/x-data-grid";
-import clsx from 'clsx';
+import CustomToolbar from "./Toolbar";
+// import { DataTeam } from "../../data/DataTeam";
+// import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
+// import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
+// import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
+// import Header from "../../Components/Header";
+// import { AGVContext } from "../../context/AGVContextDash";
+// import Grid from '@mui/material/Unstable_Grid2';
+// import Stack from '@mui/material/Stack';
+// import { color, fontSize, fontWeight } from "@mui/system";
+// import { GridCellParams } from "@mui/x-data-grid";
 
 const client = new W3CwebSocket("ws://100.88.184.54:8000/ws/agvdata")
+
+// const CustomToolbar = () => {
+//   return (
+//     <GridToolbarContainer>
+//       {/* <GridToolbarColumnsButton /> */}
+//       <GridToolbarFilterButton />
+//       {/* <GridToolbarDensitySelector /> */}
+//       <GridToolbarExport />
+//     </GridToolbarContainer>
+//   );
+// }
 
 
 const Table = () => {
@@ -45,7 +58,7 @@ const Table = () => {
   const handleSubmit = async (event) => {
     event.preventDefault()
     try {
-    const send = await APIs.post("/agvSpecs/", {
+    const send = await APIs.post("/api/agvSpecs/", {
       "vehicle_id": id,
       "vehicle_model": model,
       "battery_capacity": battery,
@@ -61,10 +74,12 @@ const Table = () => {
 useEffect (() => {
   const Table_2 = async () => {
     try {
-      const receive = await APIs.get("/agvSpecs/")
+      const receive = await APIs.get("/api/agvSpecs/");
       setDataTable2(receive.data)
+      // console.log(dataTable2)
 
     } catch (err) {
+      console.log (err.message)
   
     }
   }
@@ -108,13 +123,13 @@ useEffect (() => {
 
   const rows = dataTable.map(data => 
     { 
-      if (data.fields.car_state == '1') {
+      if (data.fields.car_state === '1') {
         data.fields.car_state = 'Active'
       }
-      if (data.fields.car_state == '2') {
+      if (data.fields.car_state === '2') {
         data.fields.car_state = 'Not Active'
       }
-
+      
     return (
     ({
       id: data.fields.car_id,
@@ -231,8 +246,8 @@ useEffect (() => {
       return '';
     } 
     return clsx('super-app', {
-      active: params.value == 'Active',
-      not_active: params.value =='Not Active'
+      active: params.value === 'Active',
+      not_active: params.value ==='Not Active'
     })
      
   }
@@ -246,9 +261,9 @@ useEffect (() => {
   // console.log(objIndex1)
 
   const rows2 = dataTable2.map((a) => {
-    if (a.is_active == false) {
+    if (a.is_active === false) {
       a.is_active = 'Not Active'
-    }  else if(a.is_active == true) {
+    }  else if(a.is_active === true) {
       a.is_active = 'Active'
     }
    
@@ -475,12 +490,16 @@ useEffect (() => {
           "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
             color: `${colors.grey[100]} !important`,
           },
+          // "& .GridToolbarExport": {
+          //   color: `${colors.grey[100]} !important`,
+          // }
         }}
       >
         <DataGrid  rows={rows}
         columns={columns} 
-        // components = {{Toolbar: GridToolbar}}
-        
+         //components = {{Toolbar: GridToolbar}}
+         components = {{Toolbar: CustomToolbar}}
+
         />
         
         </Box>
@@ -543,9 +562,7 @@ useEffect (() => {
       hideFooterPagination
       columns= {columns_1}
       rows = {rows2}
-
-      
-      // components = {{Toolbar: GridToolbar}}
+      components = {{Toolbar: CustomToolbar}}
       />
     
     </Box>

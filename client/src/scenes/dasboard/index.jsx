@@ -8,7 +8,13 @@ import { AGVs, EndPoints, LoadAmount, LoadName, LoadWeight } from "../../data/Da
 import { w3cwebsocket as W3CwebSocket } from "websocket";
 import { StartPoints } from "../../data/DatatDash";
 import { color } from "@mui/system";
-// import { mockTransactions } from "../../data/mockData";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { TimeField } from "@mui/x-date-pickers";
+import CSVtoJSONConverter from "../../Components/import_file";
+import Papa from 'papaparse';
+
+//import { TimeField } from '@mui/x-date-pickers/TimeField';
+// import { mockTransactions } from "../../datas/mockData";
 // import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
 // import Header from "../../Components/Header";
 // import LineChart from "../../components/LineChart";
@@ -35,13 +41,60 @@ const Dashboard = () => {
   const [coloredAGV2, setColoredAGV2] = useState('')
   const [coloredAGV3, setColoredAGV3] = useState('')
   const [coloredAGV4, setColoredAGV4] = useState('')
-
+  const [file, setFile] = useState()
+  const [schedule, setSchedule] = useState()
+  // const [jsonData, setJsonData] = useState([]);
 
   //  const handleChange = (event) => {
   //       setStart(event.target.value)
   // }
+  // const handleFileChange = (event) => {
+  //   const file = event.target.files[0];  //receive CSV file
+  //   Papa.parse(file, {
+  //     header: true,
+  //     complete: (results) => {   //convert file CSV to JSON
+  //       const jsonData_1 = results.data[0];
+  //       setJsonData(jsonData_1);
+  //       console.log(jsonData_1);
+  //     },
+  //   });
+  // };
 
-   
+
+  // const handleSubmit_order = async (e) => {
+  //   e.preventDefault()
+  //   try {
+  //     const send = await APIs.post("/api/orders/", jsonData)
+  //     console.log (send); 
+  //   }
+  //   catch (err)
+  //   {
+  //     console.log(err);
+  //   }
+  // }
+  
+
+   useEffect (() => {
+      const Schedule = async () => {
+        try {
+          const receive = await APIs.get("/api/schedules/");
+          // setSchedule (receive)
+          // console.log (schedule)
+          console.log(receive)
+        }
+        
+        catch (err)
+        {
+          console.log (err)
+        }
+      }
+      Schedule();
+   }, [])
+
+   const fileReader = new FileReader()
+   const  handleOnChange = (e) => {
+    setFile(e.target.files[0]);
+   };
 
     client.onopen = () => {
           console.log('Connected');
@@ -65,7 +118,7 @@ const Dashboard = () => {
     const handleSubmit = async (e) => {
       e.preventDefault()
       try {
-        const send = await APIs.post("/orders/", {
+        const send = await APIs.post("/api/orders/", {
           "load_name": load_name,
           "load_amount": load_amount,
           // "load_weight": load_weight,
@@ -140,6 +193,7 @@ const Dashboard = () => {
     })
   return (
     <Box m="20px">
+
       {/* HEADER */}
       {/* <Box display="flex" justifyContent="space-between" alignItems="center">
         <Header title="HOME" subtitle="Welcome to your HOME" />
@@ -517,32 +571,22 @@ const Dashboard = () => {
               Starting Time: 
               <div>
         <FormControl sx = {{m: -5, ml: 18, width: 250 }}>
-          {/* <InputLabel>ABVC</InputLabel> */}
-            {/* <Select
-            value={start_time}
-            label = "setStart_time"
-            onChange = {event => setStart_time(event.target.value)}
-            >
-                {StartTime.map((start_time) => (
-                    <MenuItem
-                    key={start_time}
-                    value = {start_time}
-                    >
-                    {start_time}</MenuItem>
-                ))}
-                
-            
-            </Select> */}
             <TextField 
             label = "Select Starting Time"
             value={start_time}
             onChange = {event => setStart_time(event.target.value)}
 
             />
-
-
+           {/* <LocalizationProvider>
+           <TimeField
+            label = "Format with seconds"
+            value = {start_time}
+            onChange ={(event) => setStart_time(event)}
+            format = "HH:mm:ss"
+            >
+              </TimeField>
+           </LocalizationProvider> */}
         </FormControl>
-
         </div>
 
             </Box>
@@ -591,8 +635,19 @@ const Dashboard = () => {
             </Select>
         </FormControl>
         </div>
-
             </Box>
+            {/* <Box>
+              Import Files: 
+              <FormControl>
+                <Select
+                  value = {file}
+                  id = {"csvFileInput"}
+                  accept = {".csv"}
+                  onChange = {handleOnChange}
+                >
+                </Select>
+              </FormControl>
+            </Box> */}           
             <Box 
             display="flex"
             alignItems="flex"
@@ -608,12 +663,34 @@ const Dashboard = () => {
             >
               Select 
             </Button>
-               
             </Box>
+            {/* <Box 
+            display="flex"
+            alignItems="flex"
+            justifyContent="left"
+            className= "choose_file"
+            >
+            <input type="file" onChange={handleFileChange} 
+            
+            /> 
+              <Button sx={{
+              backgroundColor: colors.redAccent[500],
+              color: colors.grey[100],
+              fontSize: "14px",
+              fontWeight: "bold",
+              //padding: "0px 8px"
+              alignItems: "right",
+            }} 
+           onClick = {handleSubmit_order}
+            >
+              Send File CSV
+            </Button>
+               
+            </Box> */}
         </Box>
 
         {/* ROW 3 */}
-       
+      
       </Box>
     </Box>
   );
