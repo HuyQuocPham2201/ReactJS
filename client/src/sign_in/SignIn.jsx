@@ -16,29 +16,57 @@ import { tokens } from '../theme';
 import { FormControl, useTheme } from '@mui/material';
 import  { useState, useRef, useEffect, useContext } from 'react';
 import { AGVContext_auth } from '../context/AGVAuth';
-
+import APIs from '../apis/APIs';
+import { setAuthToken } from '../Components/setAuthToken';
 
 
 export default function SignIn() {
-
-  const handleSubmit = (event) => {
-    event.preventDefault();
-    const data = new FormData(event.currentTarget);
-    console.log({
-      email: data.get('email'),
-      password: data.get('password'),
-    });
-  };
+  const [failed, setFailed] = useState('');
   const theme = useTheme();
   const colours = tokens(theme.palette.mode);
-  
   const userRef = useRef();
   const errRef = useRef(); 
-
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [errMsg, setErrMsg] = useState (''); 
   const [success, setSuccess] = useState(false); 
+  const {auth, setAuth} = useContext (AGVContext_auth)
+
+  const handleSubmit = async (event) => {
+    event.preventDefault();
+    // const data = new FormData(event.currentTarget);
+    // console.log({
+    //   email: data.get('email'),
+    //   password: data.get('password'),
+    // });
+    const loginPayload = {
+      username: `${username}`,
+      password: `${password}`
+
+  }
+
+ const send = await APIs.post("api/token/", loginPayload)
+ //console.log(send)
+  .then(response => {
+    //get token from response
+    const token = response.data.token;
+    //Set JWT token to local
+    localStorage.setItem("token", token)
+    if (localStorage.getItem("token"))
+    {
+        setAuth ({logged: false});
+    }
+    
+    
+    //Set Token
+  //  setAuthToken(token);
+  //   window.location.href = '/'
+  })
+  .catch (err => console.log(err));
+  setFailed('Wrong Credentials, or account does not exist!')
+  };
+
+
 
   // useEffect(() => {
   //   userRef.current.focus();
@@ -56,33 +84,23 @@ export default function SignIn() {
     setPassword(event.target.value);
   };
 
-  const handleLogin = (event) => {
-    event.preventDefault();
-    // Add your login logic here
+  const handleLogin = async (event) => {
+    // event.preventDefault();
+    // // Add your login logic here
     console.log('Username:', username);
     console.log('Password:', password);
-    // Reset the form
-    setUsername('');
-    setPassword('');
-    setSuccess(true);
-    setAuth ({logged: false});
-    console.log (auth);
+    // // Reset the form
+    // setUsername('');
+    // setPassword('');
+    // setSuccess(true);
+    // setAuth ({logged: false});
+    // console.log (auth);
+
+   
   };
    
-  const {auth, setAuth} = useContext (AGVContext_auth)
   return (
-  //  <>
-  //  {success ? (
-  //   <div> 
-  //     <h1>You are logged in</h1>
-  //     <br/>
-  //     <Link href="/" variant="body2" sx = {{color: "white"}}>
-  //       {"Go to Home"}
-  //     </Link>
-  //   </div>
-   
-  //  ) : ()}
-  //  </>
+
     <ThemeProvider theme={theme}>
       <Container component="main" maxWidth="sm" >
         <CssBaseline />
@@ -140,12 +158,12 @@ export default function SignIn() {
               variant="contained"
               sx={{ mt: 3, mb: 2, 
               backgroundColor: colours.blueAccent[700],
-              fontSize: "medium" 
+              fontSize: "medium", 
             }}
               //color = {colours.blueAccent[300]}
-
+              onClick ={handleSubmit}
             >
-              Sign In
+              Sign In 
             </Button>
             <Grid container>
               <Grid item xs>
@@ -161,6 +179,19 @@ export default function SignIn() {
                 </Link>
               </Grid>
             </Grid>
+            <Box>
+              <Typography
+              sx = {{
+                fontWeight: "bold",
+                fontSize: "18px",
+                textAlign: "center",
+                color: "red"
+
+              }}
+              >
+                {failed}
+              </Typography>
+            </Box>
           </Box>
         </Box>
         {/* <Copyright sx={{ mt: 8, mb: 4 }} /> */}

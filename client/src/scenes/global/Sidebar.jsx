@@ -5,16 +5,12 @@ import { Link, Route, Routes } from "react-router-dom";
 // import "react-pro-sidebar/dist/css/styles.css";
 import { tokens } from "../../theme";
 import HomeOutlinedIcon from "@mui/icons-material/HomeOutlined";
+import DnsRoundedIcon from '@mui/icons-material/DnsRounded';
+import EditCalendarOutlinedIcon from '@mui/icons-material/EditCalendarOutlined';
+import DirectionsCarFilledOutlinedIcon from '@mui/icons-material/DirectionsCarFilledOutlined';
 import PeopleOutlinedIcon from "@mui/icons-material/PeopleOutlined";
 import TableChartOutlinedIcon from '@mui/icons-material/TableChartOutlined';
 import CalendarMonthOutlinedIcon from '@mui/icons-material/CalendarMonthOutlined';
-import ContactsOutlinedIcon from "@mui/icons-material/ContactsOutlined";
-import ReceiptOutlinedIcon from "@mui/icons-material/ReceiptOutlined";
-import PersonOutlinedIcon from "@mui/icons-material/PersonOutlined";
-import HelpOutlineOutlinedIcon from "@mui/icons-material/HelpOutlineOutlined";
-import BarChartOutlinedIcon from "@mui/icons-material/BarChartOutlined";
-import PieChartOutlineOutlinedIcon from "@mui/icons-material/PieChartOutlineOutlined";
-import TimelineOutlinedIcon from "@mui/icons-material/TimelineOutlined";
 import MenuOutlinedIcon from "@mui/icons-material/MenuOutlined";
 import MapOutlinedIcon from "@mui/icons-material/MapOutlined";
 const Item = ({ title, to, icon, selected, setSelected }) => {
@@ -133,32 +129,32 @@ const Sidebar = () => {
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Data
+              AGVs
             </Typography>
             <MenuItem
               title=""
               routerLink = {< Link to ="/table" />}
-              icon={<TableChartOutlinedIcon />}
+              icon={<DirectionsCarFilledOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            > Table</MenuItem>
+            > AGVs Management</MenuItem>
 
             <Typography
               variant="h6"
               color={colors.grey[300]}
               sx={{ m: "15px 0 5px 20px" }}
             >
-              Pages
+              Orders
             </Typography>
 
             <MenuItem
               title="Calendar"
               routerLink = {< Link to ="/calendar" />}
 
-              icon={<CalendarMonthOutlinedIcon />}
+              icon={<EditCalendarOutlinedIcon />}
               selected={selected}
               setSelected={setSelected}
-            >Calendar</MenuItem>
+            >Orders Management</MenuItem>
             {/* <Typography
               variant="h6"
               color={colors.grey[300]}
@@ -166,11 +162,48 @@ const Sidebar = () => {
             >
               Charts
             </Typography> */}
+            
+            <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 20px" }}
+            >
+              Schedules
+            </Typography>
+            <MenuItem
+              title=""
+              routerLink = {< Link to ="/schedule" />}
+              icon={<TableChartOutlinedIcon />}
+              selected={selected}
+              setSelected={setSelected}
+            > Schedules Management</MenuItem>
+             <Typography
+              variant="h6"
+              color={colors.grey[300]}
+              sx={{ m: "15px 0 5px 20px" }}
+            >
+              Materials
+            </Typography>
+            <MenuItem
+              title=""
+              routerLink = {< Link to ="/material" />}
+              icon={<DnsRoundedIcon/>}
+              selected={selected}
+              setSelected={setSelected}
+            > Material Management</MenuItem>
+
           </Box>
                      )}
                      {/* COLLAPSED */}
         {isCollapsed && (
            <Box>
+            <Typography
+             variant="h6"
+             color={colors.grey[300]}
+             sx={{ m: "15px 0 5px 20px" }}
+           >
+             Home
+           </Typography>
            <MenuItem
              //routerLink = {< Link to ="/dashboard" />}
              routerLink = {< Link to ="/" />}
@@ -184,11 +217,11 @@ const Sidebar = () => {
              color={colors.grey[300]}
              sx={{ m: "15px 0 5px 20px" }}
            >
-             Data
+             AGVs
            </Typography>
            <MenuItem
              routerLink = {< Link to ="/table" />}
-             icon={<TableChartOutlinedIcon />}
+             icon={<DirectionsCarFilledOutlinedIcon />}
              selected={selected}
              setSelected={setSelected}
            />
@@ -203,12 +236,40 @@ const Sidebar = () => {
              color={colors.grey[300]}
              sx={{ m: "15px 0 5px 20px" }}
            >
-             Pages
+             Orders
            </Typography>
            
            <MenuItem
              routerLink = {< Link to ="/calendar" />}
+             icon={<EditCalendarOutlinedIcon />}
+             selected={selected}
+             setSelected={setSelected}
+           />
+           <Typography
+             variant="h6"
+             color={colors.grey[300]}
+             sx={{ m: "15px 0 5px 20px" }}
+           >
+             Schedules
+           </Typography>
+           
+           <MenuItem
+             routerLink = {< Link to ="/schedule" />}
              icon={<CalendarMonthOutlinedIcon />}
+             selected={selected}
+             setSelected={setSelected}
+           />
+           <Typography
+             variant="h6"
+             color={colors.grey[300]}
+             sx={{ m: "15px 0 5px 20px" }}
+           >
+             Materials
+           </Typography>
+           
+           <MenuItem
+             routerLink = {< Link to ="/material" />}
+             icon={<DnsRoundedIcon/>}
              selected={selected}
              setSelected={setSelected}
            />

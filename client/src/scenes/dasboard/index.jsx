@@ -7,23 +7,6 @@ import APIs from "../../apis/APIs";
 import { AGVs, EndPoints, LoadAmount, LoadName, LoadWeight } from "../../data/DatatDash";
 import { w3cwebsocket as W3CwebSocket } from "websocket";
 import { StartPoints } from "../../data/DatatDash";
-import { color } from "@mui/system";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { TimeField } from "@mui/x-date-pickers";
-import CSVtoJSONConverter from "../../Components/import_file";
-import Papa from 'papaparse';
-
-//import { TimeField } from '@mui/x-date-pickers/TimeField';
-// import { mockTransactions } from "../../datas/mockData";
-// import DownloadOutlinedIcon from "@mui/icons-material/DownloadOutlined";
-// import Header from "../../Components/Header";
-// import LineChart from "../../components/LineChart";
-// import GeographyChart from "../../components/GeographyChart";
-// import BarChart from "../../components/BarChart";
-// import StatBox from "../../Components/StatBox";
-// import SelectStart from "../../Components/SelectStart";
-// import { StartTime   } from "../../data/DatatDash";
-
 
 
  const client = new W3CwebSocket("ws://100.88.184.54:8000/ws/agvdata")
@@ -43,79 +26,20 @@ const Dashboard = () => {
   const [coloredAGV4, setColoredAGV4] = useState('')
   const [file, setFile] = useState()
   const [schedule, setSchedule] = useState()
-  // const [jsonData, setJsonData] = useState([]);
-
-  //  const handleChange = (event) => {
-  //       setStart(event.target.value)
-  // }
-  // const handleFileChange = (event) => {
-  //   const file = event.target.files[0];  //receive CSV file
-  //   Papa.parse(file, {
-  //     header: true,
-  //     complete: (results) => {   //convert file CSV to JSON
-  //       const jsonData_1 = results.data[0];
-  //       setJsonData(jsonData_1);
-  //       console.log(jsonData_1);
-  //     },
-  //   });
-  // };
 
 
-  // const handleSubmit_order = async (e) => {
-  //   e.preventDefault()
-  //   try {
-  //     const send = await APIs.post("/api/orders/", jsonData)
-  //     console.log (send); 
-  //   }
-  //   catch (err)
-  //   {
-  //     console.log(err);
-  //   }
-  // }
-  
+  client.onopen = () => {
+    console.log('Connected');
+}
 
-   useEffect (() => {
-      const Schedule = async () => {
-        try {
-          const receive = await APIs.get("/api/schedules/");
-          // setSchedule (receive)
-          // console.log (schedule)
-          console.log(receive)
-        }
-        
-        catch (err)
-        {
-          console.log (err)
-        }
-      }
-      Schedule();
-   }, [])
 
-   const fileReader = new FileReader()
-   const  handleOnChange = (e) => {
-    setFile(e.target.files[0]);
-   };
+client.onmessage = (message) => {
+const dataFromServer = JSON.parse(message.data)
+setA(dataFromServer)
+console.log(a)
+}
 
-    client.onopen = () => {
-          console.log('Connected');
-    }
- 
-   
-     client.onmessage = (message) => {
-      const dataFromServer = JSON.parse(message.data)
-      setA(dataFromServer)
-      console.log(a)
-      //  const Da0 = a[1].fields
-      //  console.log(Da0)
-     }
-   
-    // const onButtonClicked = (value) => {
-    //       client.send(JSON.stringify({
-    //         type: "message",
-    //         msg: value
-    //       }))
-    // }
-    const handleSubmit = async (e) => {
+const handleSubmit = async (e) => {
       e.preventDefault()
       try {
         const send = await APIs.post("/api/orders/", {
@@ -470,7 +394,7 @@ const Dashboard = () => {
           backgroundColor={colors.primary[400]}
           overflow = 'auto'
         >
-          <img width="100%" height ="100%" src = 'map.svg'></img>
+          <img width="100%" height ="100%" src = 'map_real.svg'></img>
 
         </Box>
         <Box

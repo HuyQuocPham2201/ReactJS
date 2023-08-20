@@ -13,18 +13,25 @@ import Calendar from "./scenes/calendar";
 import { AGVProvider } from "./context/AGVContextDash";
 import Table from "./scenes/table";
 import { AGVProvider_table } from "./context/AGVContextTable";
-import Login from "./scenes/Login/login";
-import Register from "./scenes/Login/register";
-import LoginPage from "./scenes/Login/login";
 import SignIn from "./sign_in/SignIn";
 import SignUp from "./sign_up/SignUp";
 import { AGVContext_auth} from "./context/AGVAuth";
+import Schedule_table from "./scenes/Schedule";
+import Material from "./scenes/Material";
+import { setAuthToken } from "./Components/setAuthToken";
+
 function App() {
   const [theme,colorMode] = useMode();
   const [isSidebar, setIsSidebar] = useState(true);
   const [currForm, setCurrForm] = useState('login');
   //const {success, setSuccess} = useContext(AGVContext_auth)
   const [auth, setAuth ] = useState ({"logged": true})
+  const token = localStorage.getItem("token");
+  if (token)
+  {
+    setAuthToken(token);
+  }
+
 
   return ( 
     <AGVContext_auth.Provider value = {{auth, setAuth}}>
@@ -36,6 +43,7 @@ function App() {
         <Routes>
         < Route path = "/" element = {<SignIn/>} />
         < Route path= "/signup" element = {<SignUp/>} />
+
         </Routes>
           ) : (
           <div className="app">
@@ -49,6 +57,9 @@ function App() {
           <Route path = "/" element = {<Dashboard/>} />
           < Route path = "/table" element = {<Table />} /> 
           < Route path = "/calendar" element = {<Calendar/>} />
+          <Route path = "/schedule" element = {<Schedule_table/>} />
+          <Route path = "/material" element ={<Material/>} />
+
           {/* < Route path = "/login" element = {<SignIn/>} />
           < Route path = "/signup" element = {<SignUp/>} /> */}
 

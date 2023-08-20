@@ -5,30 +5,35 @@ import APIs from '../apis/APIs';
 import { tokens } from '../theme';
 
 function CSVtoJSONConverter() {
-  const [jsonData, setJsonData] = useState([]);
+  const [jsonData, setJsonData] = useState({});
   const theme = useTheme();
   const colors = tokens (theme.palette.mode);
-
+  
   const handleFileChange = (event) => {
     const file = event.target.files[0];  //receive CSV file
     Papa.parse(file, {
       header: true,
+      skipEmptyLines: 'trailing',
       complete: (results) => {   //convert file CSV to JSON
-        const jsonData_1 = results.data[0];
-        setJsonData(jsonData_1);
-        console.log(jsonData_1);
+      const jsonData_1 = results.data;
+      setJsonData(jsonData_1);
+      console.log(jsonData_1);
+      console.log(jsonData);
+      }
       },
-    });
+    );
   };
   const handleSubmit = async (e) => {
     e.preventDefault()
     try {
-      const send = await APIs.post("/api/orders/", jsonData)
+      // const send = await APIs.post("/api/orders/", jsonData)
+      const send = await APIs.post("/ManageRequests/sendOrders/", jsonData)
       console.log (send); 
     }
     catch (err)
     {}
   }
+ 
 
   return (
     <div>

@@ -39,8 +39,12 @@ const Calendar = () => {
     const [end_point, setEnd_point] = useState('')
     const [date, setDate] = useState('')
     const {schedule_1, setSchedule_1} = useContext(AGVContext_table)
+    const {schedule_2, setSchedule_2} = useContext(AGVContext_table)
+    const [selectedRowIds, setSelectedRowIds] = useState();
+    const [notif, setNotif] = useState(); 
 
-
+    // take the row ids 
+    
     const onClickedButton = async (event) => {
         event.preventDefault()
         try {
@@ -53,6 +57,10 @@ const Calendar = () => {
              "order_date": date
           })
           console.log(send);
+          if (send.status == 201)
+          {
+            setNotif("Created Orders Successfully!")
+          }
         } catch (err) {}
       }
 
@@ -85,6 +93,27 @@ const Calendar = () => {
       try {
         const receive = await APIs.get("/ManageRequests/schedule/")
         console.log(receive);
+        if (receive.status == 200)
+        {
+          setNotif("Schedule Created Successfully!")
+        }
+      } catch (err) {
+         console.log(err)
+      }
+     }
+
+
+    const deleteOrder = async (event) =>{
+      event.preventDefault()
+      try {
+      const receive = await APIs.delete(`/api/orders/${selectedRowIds}`)
+        console.log(receive);
+        if (receive.statusText == 'No Content')
+        {
+           //alert("Delete Order Succesfully!")
+           setNotif("Delete Order Successfully!")
+           //clearTimeout(myTimeout)
+        }
       } catch (err) {
          console.log(err)
       }
@@ -104,7 +133,9 @@ const Calendar = () => {
         headerName: "Order Number",
         align: "center",
         headerAlign: "center",
-        type: "number"
+        type: "number",
+        width: 150
+  
       },
       {
         field: "order_date",
@@ -134,27 +165,15 @@ const Calendar = () => {
         headerAlign: "center",
       },
       {
-        field: "load_weight",
+        field: "load_amount",
         headerName: "Load Weight",
         align: "center",
         headerAlign: "center",
-      },
-      {
-        field: "car_id",
-        headerName: "Car ID",
-        align: "center",
-        headerAlign: "center",
-        type: "number"
+        width: 170
       },
       {
         field: "start_time",
         headerName: "Start Time",
-        align: "center",
-        headerAlign: "center",
-      },
-      {
-        field: "end_time",
-        headerName: "End Time",
         align: "center",
         headerAlign: "center",
       },
@@ -164,40 +183,50 @@ const Calendar = () => {
       //   align: "center",
       // },
     ]
-    useEffect (() => {
-      const Schedule = async () => {
-        try {
-          const receive = await APIs.get("/api/schedules/");
-          setSchedule_1(receive.data)
-          console.log (schedule_1)
-          //console.log(receive.data)
-        }
-        
-        catch (err)
-        {
-          console.log (err)
-        }
+
+
+
+  useEffect (() => {
+    const Schedule = async () => {
+      try {
+        const receive = await APIs.get("/api/orders/");
+        setSchedule_1(receive.data)
+        console.log (schedule_1)
+        //console.log(receive.data)
+        //console.log(selectedRowIds);
       }
+      
+      catch (err)
+      {
+        console.log (err)
+      }
+    }
+    const interval_Schedule = setInterval(()=> {
       Schedule();
-   }, [])
+    }, 5000);
+    return () => clearInterval(interval_Schedule); //This is important
+ }, [])
     
    const rows = schedule_1.map(a => {
     return (
       ({
-        id: a.id,
+        id: a.request_id,
         order_number: a.order_number,
         order_date: a.order_date, 
         from_node: a.from_node,
         to_node: a.to_node,
         load_name: a.load_name,
-        load_weight: a.load_weight,
+        load_amount: a.load_amount,
         start_time: a.start_time,
         end_time: a.end_time,
-        car_id: a.car_id,
+        //car_id: a.car_id,
         //completion_st: a.completion_st
       })
     )
    })
+
+   
+
 
     return (
         <Box
@@ -212,74 +241,11 @@ const Calendar = () => {
     gridArea="a"
     //borderRight = {`10px solid ${colors.primary[500]}`}
     >
-        {/* <Box display = "flex" justifyContent = "space-between">
-            <Box flex ="1 1 20%" 
-             backgroundColor = {colors.primary[400]}
-             p = "15px"
-             borderRadius= "4px">
-             <Typography variant='h5'>Events</Typography>
-             <List>
-                {currentEvents.map((event) => (
-                    <ListItem 
-                    key = {event.id}
-                    sx = {{
-                        backgroundColor: colors.greenAccent[500],
-                        margin: "10px 0",
-                        borderRadius: "2px"
-    
-                    }}> 
-                    <ListItemText
-                    primary = {event.title}
-                    secondary = {
-                        <Typography>
-                            {formatDate(event.start, {
-                              year: "numeric",
-                              month: "short",
-                              day: "numeric",
-                            })}
-                        </Typography>
-                    } 
-                    />
-                    </ListItem>
-                        ))}
-             </List>
-            </Box>
-            <Box flex = "1 1 100%" ml = "15px">
-                <FullCalendar 
-                height= "75vh"
-                plugins={[
-                    dayGridPlugin,
-                    timeGridPlugin,
-                    interactionPlugin,
-                    listPlugin,
-                ]}
-                headerToolbar = {{
-                    left: "prev,next today",
-                    center: "title",
-                    right: "dayGridMonth,timeGridWeek,timeGridDay,listMonth"
-                }}
-                intitialView = "dayGridMonth"
-                editable = {true}
-                selectable = {true}
-                selectMirror = {true}
-                dayMaxEvents = {true}
-                select = {handleDateClick}
-                eventClick = {handleEventClick}
-                eventsSet = {(events) => setCurrentEvents(events)}
-                initialEvents = {[
-                    {id: "1234", 
-                    title: "All-day event", 
-                    date: "2022-09-14" },
-                    {id: "4321", title: "Timed event", date: "2022-09-28" },
-                ]}
-                />
-            </Box>
-        </Box>  */}
          <Box 
         width =  "100%"
         // gridRow= "span 4"
         // m="40px 0 0 0"
-        height="100%"
+        height = "70%"
         sx={{
           "& .MuiDataGrid-root": {
             border: "none",
@@ -313,21 +279,182 @@ const Calendar = () => {
         }}
       >
         <DataGrid  
-        columns={colums} 
-        rows={rows}
-         //components = {{Toolbar: GridToolbar}}
-         //components = {{Toolbar: CustomToolbar}}
-        hideFooter
+          sx = {{fontSize: 17}}
+          columns={colums} 
+          rows={rows}
+          //components = {{Toolbar: GridToolbar}}
+          //components = {{Toolbar: CustomToolbar}}
+          checkboxSelection
+          onSelectionModelChange={(p) => {
+              setSelectedRowIds(p[0]);
+              console.log(selectedRowIds)
+            }
+          }
+          hideFooter
         />
         
         </Box>
+        <Box
+     width = "100%"
+     height = "30%"
+    //  sx= {{textAlign: "left" 
+    // }}    
+    // borderLeft={`10px solid ${colors.primary[500]}`}                   
+     > 
+     <Box
+        sx= {{textAlign: "left"  }}    
+     >
+      <Button
+        sx = {{backgroundColor: colors.blueAccent[600],
+          color: colors.grey[100],
+          padding: "20px 18px",
+          fontWeight: "bold",
+          fontSize: "13px",
+          textAlign: "left" 
+        }}
+        onClick = {deleteOrder}
+        >
+          Delete Order
+        </Button>
+        </Box>
+      <Box
+          sx= {{textAlign: "center"}}  
+          borderBottom ={`10px solid ${colors.primary[400]}`}
+  
+      >
+        <Typography
+        sx = {{
+          fontSize: "medium",
+          fontWeight: "bold",
+        }}>
+          {notif}
+        </Typography>
+      </Box>
+
+        <Box
+         sx= {{textAlign: "center"}}    
+        >
+        <Button
+        sx = {{backgroundColor: colors.greenAccent[500],
+          color: colors.grey[100],
+          padding: "18px 40px",
+          //alignItems: "center",
+          fontWeight: "bold",
+          fontSize: "20px",
+        }}
+        onClick = {sendRequest}
+        >
+          Generate Schedule
+        </Button>
+        </Box>
+       </Box>
+
+       {/* <Box
+     width = "80%"
+     height = "20%"
+     borderRight = {`10px solid ${colors.primary[400]}`}
+     sx= {{textAlign: "center" 
+    }}    
+    // borderLeft={`10px solid ${colors.primary[500]}`}                   
+     > 
+    <Button
+        sx = {{backgroundColor: colors.greenAccent[500],
+          color: colors.grey[100],
+          padding: "30px 50px",
+          alignItems: "center",
+          fontWeight: "bold",
+          fontSize: "17px",
+        }}
+        onClick = {sendRequest}
+        >
+          Generate Schedule
+        </Button>
+       
+       </Box> */}
 
     </Box>
+
+     {/* TABLE 2 - SCHEDULE  */}
+    {/* <Box
+    gridArea = "d"
+    width = "100%"
+    borderLeft={`10px solid ${colors.primary[500]}`}                   
+
+    > 
+       <Box 
+        width =  "100%"
+        height = "80%"
+        // gridRow= "span 4"
+        // m="40px 0 0 0"
+        sx={{
+          "& .MuiDataGrid-root": {
+            border: "none",
+          },
+          "& .MuiDataGrid-cell": {
+            borderBottom: "none",
+          },
+          "& .name-column--cell": {
+            color: colors.greenAccent[300],
+          },
+          "& .MuiDataGrid-columnHeaders": {
+            backgroundColor: colors.blueAccent[700],
+            borderBottom: "none",
+          },
+          "& .MuiDataGrid-virtualScroller": {
+            backgroundColor: colors.primary[400],
+          },
+          "& .MuiDataGrid-footerContainer": {
+            borderTop: "none",
+            backgroundColor: colors.blueAccent[700],
+          },
+          "& .MuiCheckbox-root": {
+            color: `${colors.greenAccent[200]} !important`,
+          },
+          "& .MuiDataGrid-toolbarContainer .MuiButton-text": {
+            color: `${colors.grey[100]} !important`,
+          },
+          // "& .GridToolbarExport": {
+          //   color: `${colors.grey[100]} !important`,
+          // }
+        }}
+      >
+        <DataGrid  
+        autoPageSize
+        //npmautoHeight
+          columns={colums_2} 
+          rows={rows_2}
+          //components = {{Toolbar: GridToolbar}}
+          //components = {{Toolbar: CustomToolbar}}
+          // checkboxSelection
+          // onSelectionModelChange={(p) => {
+          //     setSelectedRowIds(p[0]);
+          //     console.log(selectedRowIds)
+          //   }
+          // }
+          hideFooter
+        />
+        
+        </Box>
+        <Box
+     width = "100%"
+     //gridArea="d"
+     height = "20%"
+     borderRight = {`10px solid ${colors.primary[400]}`}
+     sx= {{textAlign: "center" 
+    }}    
+    // borderLeft={`10px solid ${colors.primary[500]}`}                   
+
+     > 
+       
+       </Box>
+
+
+    </Box> */}
   
+  {/* COLUMN 3 - COMMAND */}
     <Box gridArea="b"
     overflow= "auto"
-    borderLeft={`10px solid ${colors.primary[500]}`}
-                        
+    borderLeft={`10px solid ${colors.primary[500]}`}                   
     >
          <Box
   className="Command_header_calendar"
@@ -340,7 +467,7 @@ const Calendar = () => {
 borderBottom ={`10px solid ${colors.primary[500]}`}
 
   >
-    Command.
+    Place Orders.
   </Box>
   <Box 
   borderBottom ={`10px solid ${colors.primary[500]}`}
@@ -509,12 +636,25 @@ borderBottom ={`10px solid ${colors.primary[500]}`}
     </Box>
 
   {/* COLUMNS 2 */}
-  <Box
+  {/* <Box
      width = "100%"
      gridArea="c"
      height = "0vh"
      borderRight = {`10px solid ${colors.primary[400]}`}
      sx= {{textAlign: "center" }}     > 
+        <Button
+        sx = {{backgroundColor: colors.redAccent[500],
+          color: colors.grey[100],
+          padding: "0px 25px",
+          //alignItems: "right",
+          fontWeight: "bold",
+          fontSize: "17px",
+        }}
+        onClick = {deleteOrder}
+        >
+          Delete Order
+        </Button>
+
         <Button
         sx = {{backgroundColor: colors.greenAccent[500],
           color: colors.grey[100],
@@ -528,7 +668,9 @@ borderBottom ={`10px solid ${colors.primary[500]}`}
           Generate Schedule
         </Button>
        </Box>
+       */}
   
   </Box>    
+  
 )}
 export default Calendar;

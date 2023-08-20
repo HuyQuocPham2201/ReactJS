@@ -12,30 +12,9 @@ import clsx from 'clsx';
 import { Guidance_type, Load_transfer } from "../../data/DataTable";
 import { AGVContext_table } from "../../context/AGVContextTable";
 import CustomToolbar from "./Toolbar";
-// import { DataTeam } from "../../data/DataTeam";
-// import AdminPanelSettingsOutlinedIcon from "@mui/icons-material/AdminPanelSettingsOutlined";
-// import LockOpenOutlinedIcon from "@mui/icons-material/LockOpenOutlined";
-// import SecurityOutlinedIcon from "@mui/icons-material/SecurityOutlined";
-// import Header from "../../Components/Header";
-// import { AGVContext } from "../../context/AGVContextDash";
-// import Grid from '@mui/material/Unstable_Grid2';
-// import Stack from '@mui/material/Stack';
-// import { color, fontSize, fontWeight } from "@mui/system";
-// import { GridCellParams } from "@mui/x-data-grid";
+
 
 const client = new W3CwebSocket("ws://100.88.184.54:8000/ws/agvdata")
-
-// const CustomToolbar = () => {
-//   return (
-//     <GridToolbarContainer>
-//       {/* <GridToolbarColumnsButton /> */}
-//       <GridToolbarFilterButton />
-//       {/* <GridToolbarDensitySelector /> */}
-//       <GridToolbarExport />
-//     </GridToolbarContainer>
-//   );
-// }
-
 
 const Table = () => {
   const theme = useTheme();
@@ -64,7 +43,7 @@ const Table = () => {
       "battery_capacity": battery,
       "load_capacity": load_capacity,
       "travel_speed": speed,
-      "guidance_tupe": guidance,
+      "guidance_type": guidance,
       "load_transfer": load_transfer,
       "is_active": active,
     })
@@ -76,14 +55,19 @@ useEffect (() => {
     try {
       const receive = await APIs.get("/api/agvSpecs/");
       setDataTable2(receive.data)
-      // console.log(dataTable2)
+      console.log(dataTable2)
 
     } catch (err) {
       console.log (err.message)
   
     }
   }
-  Table_2();
+  const interval_Table2 = setInterval(() => {
+    Table_2();
+  }, 10000);
+
+  return () => clearInterval(interval_Table2); //This is important
+
 }, [])
  
 
@@ -225,6 +209,7 @@ useEffect (() => {
      type: 'number',
      headerAlign: "center",
      align: "center",
+     width: "180"
     //  cellClassName: (params) => {
     //   if (params.value == null) {
     //     return '';
@@ -495,7 +480,9 @@ useEffect (() => {
           // }
         }}
       >
-        <DataGrid  rows={rows}
+        <DataGrid  
+        sx = {{fontSize: 18}}
+        rows={rows}
         columns={columns} 
          //components = {{Toolbar: GridToolbar}}
          components = {{Toolbar: CustomToolbar}}
@@ -559,6 +546,7 @@ useEffect (() => {
         }
       
       }}
+      sx = {{fontSize: 17}}
       hideFooterPagination
       columns= {columns_1}
       rows = {rows2}
